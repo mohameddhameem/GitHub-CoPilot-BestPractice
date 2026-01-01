@@ -1,0 +1,184 @@
+# pyproject.toml for Python projects (FastAPI Backend & PyTorch AI Backend)
+# Place this in the root of each Python project
+# Use pinned tool versions in requirements-dev.txt (e.g., ruff==0.6.*, black==24.10.*)
+
+[project]
+name = "your-project-name"
+version = "0.1.0"
+description = "Your project description"
+requires-python = ">=3.11"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+# Note: manage runtime deps with pip-tools or Poetry; keep lockfiles committed
+
+# ============================================================================
+# RUFF Configuration (Primary Linter & Fast Formatter)
+# ============================================================================
+[tool.ruff]
+# Line length to match IntelliJ default and be reasonable for code review
+line-length = 120
+target-version = "py311"
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist",
+    ".pytest_cache",
+    ".mypy_cache",
+]
+
+# Enable these rule sets
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "UP",    # pyupgrade
+    "ARG",   # flake8-unused-arguments
+    "SIM",   # flake8-simplify
+    "RET",   # flake8-return
+    "PT",    # flake8-pytest-style
+    "Q",     # flake8-quotes
+    "RSE",   # flake8-raise
+    "T20",   # flake8-print
+    "PIE",   # flake8-pie
+    "PD",    # pandas-vet
+    "NPY",   # NumPy-specific rules (for ML project)
+    "RUF",   # Ruff-specific rules
+    "PERF",  # Performance anti-patterns
+    "FURB",  # refurb
+]
+
+# Ignore specific rules
+ignore = [
+    "E501",    # Line too long (handled by black)
+    "B008",    # Do not perform function calls in argument defaults (FastAPI Depends)
+    "T201",    # print found (we use logger, but allow for debugging)
+    "UP007",   # Use X | Y for type annotations (keep Optional for clarity)
+]
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint]
+# Allow autofix for all enabled rules (when `--fix` is provided)
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403"]  # Allow unused imports in __init__.py
+"tests/*" = ["ARG", "S101"]       # Allow unused arguments and asserts in tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+section-order = [
+    "future",
+    "standard-library", 
+    "third-party",
+    "first-party",
+    "local-folder"
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10  # Maximum cyclomatic complexity
+
+[tool.ruff.format]
+quote-style = "single"  # Use single quotes (can change to "double" if preferred)
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+# ============================================================================
+# BLACK Configuration (Code Formatter)
+# ============================================================================
+[tool.black]
+line-length = 120
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+  | build
+  | dist
+  | __pycache__
+)/
+'''
+# Use single quotes to match ruff (remove this if you prefer double quotes)
+skip-string-normalization = false
+
+# ============================================================================
+# MYPY Configuration (Type Checking)
+# ============================================================================
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+pretty = true
+
+# Per-module options
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+# ============================================================================
+# PYTEST Configuration
+# ============================================================================
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+
+# ============================================================================
+# COVERAGE Configuration
+# ============================================================================
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/venv/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
