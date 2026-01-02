@@ -2,8 +2,13 @@
 
 ## Scope and navigation
 - Multi-project repo: React frontend, FastAPI backend, PyTorch inference backend, Ansible infra. Keep ownership boundaries strict; no cross-project runtime code.
-- Entry points: [ansible-infra/.github/copilot-instructions.md](ansible-infra/.github/copilot-instructions.md), [fastapi-backend/.github/copilot-instructions.md](fastapi-backend/.github/copilot-instructions.md), [pytorch-ai-backend/.github/copilot-instructions.md](pytorch-ai-backend/.github/copilot-instructions.md), [react-frontend/.github/copilot-instructions.md](react-frontend/.github/copilot-instructions.md).
-- If you add new subprojects, mirror this pattern and add a path-specific instructions file under `.github/instructions` with an `applyTo` glob.
+- Path-specific instructions under `.github/instructions/` load automatically based on file type:
+  - `python.instructions.md` - all Python files
+  - `fastapi.instructions.md` - FastAPI backend Python files
+  - `pytorch.instructions.md` - PyTorch backend Python files
+  - `typescript.instructions.md` - TypeScript/React files
+  - `ansible.instructions.md` - Ansible YAML files
+- If you add new subprojects, add a path-specific instructions file under `.github/instructions` with an `applyTo` glob.
 
 ## Setup (do before edits)
 - Run [setup_script.ps1](setup_script.ps1) on Windows or [setup_script.sh](setup_script.sh) on WSL/macOS/Linux to install ruff, black, mypy, pytest, pre-commit.
