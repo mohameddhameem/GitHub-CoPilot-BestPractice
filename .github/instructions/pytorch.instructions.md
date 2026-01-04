@@ -4,7 +4,11 @@ applyTo: "pytorch-ai-backend/**/*.py"
 
 # PyTorch Inference Backend
 
+## Precedence
+- Root guidance in [.github/copilot-instructions.md](../copilot-instructions.md) applies, then [python instructions](python.instructions.md). This file adds PyTorch inference-specific rules and overrides the Python baseline where noted.
+
 ## Project Structure
+- Goal: isolate inference concerns (load, preprocess, infer, postprocess, monitor).
 ```
 src/
   api/
@@ -28,6 +32,7 @@ src/
 ```
 
 ## Inference Request/Response Models
+- Goal: validate shapes and bounds before compute.
 ```python
 from pydantic import BaseModel, Field, field_validator, ConfigDict
 
@@ -53,6 +58,7 @@ class InferenceResponse(BaseModel):
 ```
 
 ## Model Loading
+- Goal: fast, deterministic load with optimized runtimes.
 - Load models once at startup, not per request
 - Prefer ONNX Runtime or TorchScript over raw PyTorch
 - Use `torch.inference_mode()` instead of `torch.no_grad()`
@@ -77,6 +83,7 @@ class InferenceEngine:
 ```
 
 ## Inference with Logging
+- Goal: measure latency and capture context without leaking PII.
 ```python
 from time import perf_counter
 
@@ -92,31 +99,53 @@ async def predict(self, input_data):
     return output
 ```
 
+  Good: pre-create sessions/engines on startup and reuse; Bad: loading models inside request handlers.
+
 ## Batching for Throughput
+- Goal: maximize throughput without exceeding latency SLOs.
 - Batch multiple requests for better GPU utilization
 - Cap batch sizes to control memory usage
 - Expose backpressure when queues grow
+- Good: bounded queue + max batch size; Bad: unbounded queue leading to OOM.
 
 ## Device Placement
+- Goal: predictable resource use across hardware targets.
 - Prefer CUDA when available; fallback to CPU
 - Set thread limits for CPU inference
 - Use FP16 on supported hardware
+- CPU-only policy: set `OMP_NUM_THREADS`/`MKL_NUM_THREADS` explicitly; document chosen values in settings.
 
 ## Model Governance
+- Goal: traceability for every deployed artifact.
 - Version every model artifact
 - Store hashes and metadata for integrity
 - Document training data and eval metrics in model card
+- Record metadata under `model-registry/` (hash, version, source commit, eval metrics) alongside artifact location.
 
 ## Reliability
+- Goal: resilient startup and guarded execution.
 - Add warmup on startup to populate caches
 - Validate input shapes and ranges before inference
 - Scrub PII from logs
 
 ## Testing
+- Goal: verify numerical correctness and latency budgets.
 - Unit tests for preprocessing/postprocessing
 - Integration tests for full pipeline
 - Performance benchmarks for latency and throughput
 - Validate outputs against expected ranges
+- Minimum: happy path + invalid-shape + out-of-range input per model entrypoint
+
+## Formatting, Benchmarks, and CI hooks
+- Goal: keep inference code linted, formatted, and benchmarked before merge.
+- Run before commit:
+```bash
+ruff check pytorch-ai-backend --fix
+black pytorch-ai-backend
+pre-commit run --all-files
+```
+- Benchmarks: maintain baseline JSON under `benchmarks/` (throughput, P50/P95 latency). Update when performance-sensitive code changes and note deltas in PR.
+*CI expectation*: run lint/format; run benchmarks or provide baseline diff for perf-impacting changes.
 
 ## Optimization Checklist
 - Convert model to ONNX or TorchScript

@@ -4,7 +4,11 @@ applyTo: "**/*.ts,**/*.tsx"
 
 # React TypeScript Frontend
 
+## Precedence
+- Root guidance in [.github/copilot-instructions.md](../copilot-instructions.md) applies. This file is frontend-specific; if conflicts arise with repo-wide rules, this file wins for `.ts/.tsx` files.
+
 ## Project Structure
+- Goal: keep concerns separated (components, features, hooks, services, types).
 ```
 src/
   components/     # Reusable UI components
@@ -18,6 +22,7 @@ src/
 ```
 
 ## Component Patterns
+- Goal: small, composable, predictable components.
 - Functional components with hooks only
 - One component per file
 - Component naming: PascalCase (UserProfile.tsx)
@@ -51,12 +56,14 @@ export const UserCard = ({ userId, onDelete }: UserCardProps) => {
 ```
 
 ## TypeScript
+- Goal: keep types sound and APIs explicit.
 - Strict mode enabled
 - No `any` types; use `unknown` with type guards
 - Define interfaces for all props, state, and API responses
 - Use type inference where obvious; explicit types for public APIs
 
 ## State Management
+- Goal: pick the lightest-weight state tool for the job.
 - React Context for global state
 - React Query/SWR for server state
 - useState for UI-only state
@@ -64,6 +71,7 @@ export const UserCard = ({ userId, onDelete }: UserCardProps) => {
 - Avoid prop drilling beyond 2 levels
 
 ## Performance
+- Goal: avoid unnecessary renders and payloads.
 - useMemo for expensive calculations
 - useCallback for callbacks passed to children
 - React.memo for pure components with expensive renders
@@ -71,9 +79,11 @@ export const UserCard = ({ userId, onDelete }: UserCardProps) => {
 - Virtualize long lists
 
 ## API Integration
+- Goal: consistent data fetching and error handling.
 - Centralize API calls in services/
 - Type all API responses
 - Handle loading and error states consistently
+- UX: loading, empty, and error states must be explicit; show retry affordance on errors.
 
 ```typescript
 interface User {
@@ -91,35 +101,48 @@ export const userService = {
 ```
 
 ## Error Handling
+- Goal: fail visibly without breaking the app tree.
 - Error boundaries for component trees
 - Graceful degradation for failed features
 - User-friendly error messages
 
 ## Accessibility
+- Goal: WCAG-friendly components by default.
 - Semantic HTML elements
 - ARIA labels where needed
 - Keyboard navigation support
 - Focus management for modals
+- Linting: use eslint-plugin-jsx-a11y; fix violations or document waivers with issue links.
 
 ## Testing
+- Goal: verify behavior from the user’s perspective.
 - Test user interactions, not implementation
 - Use React Testing Library
 - Mock API calls in tests
 - Test error states and edge cases
+- Minimum: happy path + one error state per component with async data
+- Snapshots: only for stable presentational components; regenerate when intentional UI change occurs and note in PR.
+- Coverage: keep statements/branches/functions >= 80% per package unless waived with justification.
 
 ## Code Quality
+- Goal: keep codebase lint-clean and production-safe.
 - ESLint with strict rules
 - No console.log in production
 - Remove unused imports
 
-## Formatting
-Run before commit:
+## Styling, Formatting, and CI hooks
+- Goal: ensure consistent lint/format, styling, and test coverage before merge.
+- Styling: default to CSS modules; use styled-components only when theme/SSR or dynamic styling is required. Be consistent within a feature.
+- Run before commit:
 ```bash
 npm run lint
 npm run format
+npm test -- --watch=false
 ```
+*CI expectation*: same commands; add/update snapshots when UI changes; enforce coverage thresholds.
 
 ## Anti-Patterns to Avoid
+- Goal: maintain readability and security.
 - No inline styles; use CSS modules or styled-components
 - No nested ternary operators
 - No giant useEffect hooks; split into focused effects
