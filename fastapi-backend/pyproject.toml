@@ -3,9 +3,9 @@
 # Use pinned tool versions in requirements-dev.txt (e.g., ruff==0.6.*, black==24.10.*)
 
 [project]
-name = "your-project-name"
+name = "fastapi-backend"
 version = "0.1.0"
-description = "Your project description"
+description = "FastAPI Backend for Multi-Stack Starter Kit"
 requires-python = ">=3.11"
 
 [build-system]

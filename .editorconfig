@@ -1,0 +1,56 @@
+# EditorConfig - Universal IDE Configuration
+# https://editorconfig.org
+# Supported by: VS Code, IntelliJ, PyCharm, WebStorm, Sublime, Vim, etc.
+
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Python files
+[*.py]
+indent_size = 4
+max_line_length = 120
+
+# JavaScript/TypeScript/React
+[*.{js,jsx,ts,tsx}]
+indent_size = 2
+max_line_length = 120
+
+# Web files
+[*.{html,css,scss,less}]
+indent_size = 2
+
+# JSON and config files
+[*.{json,jsonc}]
+indent_size = 2
+
+# YAML (Ansible, CI/CD)
+[*.{yml,yaml}]
+indent_size = 2
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+
+# Makefiles require tabs
+[Makefile]
+indent_style = tab
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+
+# PowerShell
+[*.ps1]
+indent_size = 4
+
+# Dockerfile
+[Dockerfile]
+indent_size = 4

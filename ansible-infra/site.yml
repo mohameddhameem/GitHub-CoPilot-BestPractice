@@ -1,0 +1,21 @@
+---
+- name: Setup Multi-Stack Infrastructure
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure common packages are installed
+      apt:
+        name:
+          - curl
+          - git
+          - python3-pip
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Create app directory
+      file:
+        path: /opt/multi-stack-app
+        state: directory
+        owner: www-data
+        group: www-data

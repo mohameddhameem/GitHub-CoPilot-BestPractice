@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install Python deps",
+      "type": "shell",
+      "command": "python -m pip install -r requirements.txt",
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/fastapi-backend"
+      }
+    },
+    {
+      "label": "Run FastAPI server",
+      "type": "shell",
+      "command": "uvicorn main:app --reload",
+      "group": "run",
+      "options": {
+        "cwd": "${workspaceFolder}/fastapi-backend"
+      }
+    },
+    {
+      "label": "Run React dev server",
+      "type": "shell",
+      "command": "npm start",
+      "group": "run",
+      "options": {
+        "cwd": "${workspaceFolder}/react-frontend"
+      }
+    },
+    {
+      "label": "Run PyTorch inference",
+      "type": "shell",
+      "command": "python -m torchserve --start --model-store model_store --models mymodel=marfile.mar",
+      "group": "run",
+      "options": {
+        "cwd": "${workspaceFolder}/pytorch-ai-backend"
+      }
+    },
+    {
+      "label": "Lint & Format",
+      "type": "shell",
+      "command": "pre-commit run --all-files",
+      "group": "test",
+      "presentation": {
+        "reveal": "always"
+      }
+    }
+  ]
+}

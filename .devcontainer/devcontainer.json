@@ -1,0 +1,44 @@
+{
+  "name": "Multi-Stack AI Starter Kit",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.analysis.typeCheckingMode": "basic",
+        "python.linting.enabled": true,
+        "python.formatting.provider": "none",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.ruff": "explicit",
+          "source.organizeImports.ruff": "explicit"
+        },
+        "ruff.enable": true,
+        "ruff.lint.run": "onSave",
+        "black-formatter.args": [
+          "--line-length=120"
+        ],
+        "editor.defaultFormatter": "ms-python.black-formatter"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.black-formatter",
+        "charliermarsh.ruff",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "redhat.ansible",
+        "github.copilot",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "forwardPorts": [
+    8000,
+    3000,
+    8080
+  ],
+  "remoteUser": "vscode"
+}

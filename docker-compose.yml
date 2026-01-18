@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fastapi-backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  react:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm start"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./react-frontend:/app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  pytorch:
+    build:
+      context: ./pytorch-ai-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./pytorch-ai-backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
